@@ -1,0 +1,6 @@
+[gin]
+mode = "debug"
+
+[notification]
+xiezuo = ""
+template = "标题: {{.AlertName}}\n应用标签:{{.AlertLabels}}\n当前值:{{.AlertValues}}\n告警面板: {{.AlertURL}}\n发生时间: {{.AlertAtTime}}\n持续时间: {{.AlertKeepTime}}\n"

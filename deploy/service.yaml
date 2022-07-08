@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-webhook
+  labels:
+    app: grafana-webhook
+spec:
+  selector:
+    app: grafana-webhook
+  type: NodePort
+  ports:  
+  - name: http
+    port: 8000
+    targetPort: 8000
+    protocol: TCP

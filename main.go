@@ -1,38 +1,34 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"os"
-	"path/filepath"
-	"strings"
+	"io/ioutil"
 
 	"github.com/gin-gonic/gin"
-	"github.com/shaowenchen/go-repo-template/config"
-	"github.com/spf13/viper"
+	"github.com/shaowenchen/grafana-webhook/config"
+	"github.com/shaowenchen/grafana-webhook/pkg/notification"
 )
 
 func init() {
-	path, err := os.Getwd()
-	if err != nil {
-		panic(err)
-	}
-	viper.AddConfigPath(filepath.Join(path, "."))
-	viper.AutomaticEnv()
-	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
-	viper.SetConfigName("config")
-	viper.SetConfigType("toml")
-	err = viper.ReadInConfig()
-	if err != nil {
-		fmt.Sprintf("fatal error config file: %s \n", err)
-	}
-	config.ReadConfig()
-	gin.SetMode(config.Config.Gin.RunMode)
+	configpath := flag.String("c", "", "")
+	flag.Parse()
+	config.ReadConfig(*configpath)
 }
 
 func main() {
+	gin.SetMode(config.Config.Gin.RunMode)
 	router := gin.Default()
-	router.GET("/", func(context *gin.Context) {
-		context.String(200, "")
+	router.GET("/", func(c *gin.Context) {
+		c.String(200, "")
+	})
+	router.POST("/", func(c *gin.Context) {
+		jsonData, err := ioutil.ReadAll(c.Request.Body)
+		if err != nil {
+			fmt.Errorf("read request body error,%v", err)
+		}
+		notification.SendXieZuo(jsonData)
+		c.String(200, "")
 	})
 	router.Run(":8000")
 }

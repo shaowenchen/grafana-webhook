@@ -12,7 +12,8 @@
             "cwd": "${workspaceFolder}",
             "program": "${file}",
             "args": [
-                "-c config.toml"
+                "-c",
+                "default.toml"
             ],
             "env": {}
         }
